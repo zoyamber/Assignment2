@@ -1,0 +1,23 @@
+#!/bin/bash
+# shebang specifies script should be run using bash shell
+
+
+# This script is used to create symolic links 
+# config-app-files
+
+# https://phoenixnap.com/kb/symbolic-link-linux 
+
+
+config_dir=$(pwd)
+
+ln -sf "$config_dir/bin/sayhi" ~/bin/sayhi
+ln -sf "$config_dir/bin/install-fonts" ~/bin/install-fonts
+
+mkdir -p ~/.config
+
+ln -sf "$config_dir/config/kak" ~/.config/kak
+ln -sf "$config_dir/config/tmux" ~/.config/tmux
+
+ln -sf "$config_dir/home/bashrc" ~/.bashrc
+
+echo "symbolic links were created successfully!"

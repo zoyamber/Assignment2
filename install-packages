@@ -1,0 +1,31 @@
+#!/bin/bash
+
+
+check-root() {
+  if [[ $EUID -ne 0 ]]; then
+    echo "this script can only be run as root"
+    exit 1
+  fi
+}
+
+check-package-exists() {
+  if [[ ! -f list-packages ]]; then
+    echo "Error: list-packages does not exist!"
+    exit 1
+  fi
+}
+
+install-package() {
+  while IFS= read -r package; do
+    if [[ -n "$package" ]]; then 
+      echo "installing $package..."
+      pacman -S --noconfirm "$package" || echo "Failed to install $package"
+    fi
+  done < list-packages.txt
+}
+
+
+check-root
+check-package-exists
+install-package
+

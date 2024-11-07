@@ -1,0 +1,21 @@
+#!/bin/bash
+#shebang 
+
+# https://www.baeldung.com/linux/shell-call-script-from-another
+
+echo "calling list packages:"
+./list-packages
+
+echo \
+
+echo "calling installing packages:"
+./install-packages
+
+echo \
+
+echo "calling config for symolic links:"
+./config-app-files
+
+echo \
+
+echo "All the scripts were called and loaded successfully!"

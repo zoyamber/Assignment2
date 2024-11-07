@@ -1,0 +1,28 @@
+#!/bin/bash
+# specifies bash shell
+# The purpose of this script is to create a list of packages in list-packages.txt
+
+# Function to list packages
+list-packages() {
+#this defines the 2 packages that are going to be written into a list
+    packages=("kakoune" "tmux")
+
+# each package should be written into list-packages.txt
+    echo "Creating list-packages.txt with these packages:"
+# if the file already exists, this line will clear the contents
+    > list-packages.txt 
+# start off a for loop that iterates over the packages in packages array provided at the top
+    for package in "${packages[@]}"; do
+# appends the current package into list-packages.txt
+        echo "$package" >> list-packages.txt
+# will print the packages back into the terminal with a hyphen infront of the package name
+        echo "- $package"
+# end of the loop
+    done
+#this prints and lets the user know that the packages have been successfully saved into list-packages.txt
+    echo "Package list successfully saved to list-packages.txt"
+# the list-packages function is finished
+}
+
+# Call the function to list packages to execute the script
+list-packages
