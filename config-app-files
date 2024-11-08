@@ -7,17 +7,24 @@
 
 # https://phoenixnap.com/kb/symbolic-link-linux 
 
-
+# this will define the variable called "config_dir" to hold the current directory path 
 config_dir=$(pwd)
 
+#this will create a symbolic link from my config directory to "~/bin/sayhi"
 ln -sf "$config_dir/bin/sayhi" ~/bin/sayhi
+# this will create a symbolic link from my config directory to "~/bin/install-fonts"
 ln -sf "$config_dir/bin/install-fonts" ~/bin/install-fonts
 
+# mkdir will create a ".config" directory in users home directory only if it already doesn't exist
 mkdir -p ~/.config
 
+# this will create a symbloic link from the config directory to "~/.config/kak"
 ln -sf "$config_dir/config/kak" ~/.config/kak
+# this will create a symbolic link from the config directory to "~/.config/tmux"
 ln -sf "$config_dir/config/tmux" ~/.config/tmux
 
+# this will create a symbolic link from my config directory to "~/.bashrc"
 ln -sf "$config_dir/home/bashrc" ~/.bashrc
 
+# this line will print a success message to the user
 echo "symbolic links were created successfully!"

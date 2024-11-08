@@ -1,30 +1,56 @@
 #!/bin/bash
+# shebang
 
 
+# this function is used to determine whether the script is run as the root
 check-root() {
+# This line of the if statement will check if the effective user ID is not 0
   if [[ $EUID -ne 0 ]]; then
+# if it is not run as root, this line will print an error message to the user
     echo "this script can only be run as root"
+# indicating an error and exiting the script with status code of 1
     exit 1
+# finishes the if statement
   fi
+# closes the check-root function
 }
 
+
+# This function is used to check whether package file exists
 check-package-exists() {
+# Start of if statement where it's checking if the file called "list-packages" does not exist
   if [[ ! -f list-packages ]]; then
+# if the file does not exist, it will print an error message to the user
     echo "Error: list-packages does not exist!"
+# indicating an error and exiting the script with status code of 1
     exit 1
+# finishes the if statement
   fi
+#closes the check-package-exists function
 }
 
+
+# this function is used to install packages from the file list-packages.txt
 install-package() {
-  while IFS= read -r package; do
+# this while loop determines that each line from list-packages.txt is read into a variable called package 
+# the loop will continue as long as the statement succeeds, returning exit status of zero
+  while read -r package; do
+# start of if statement that makes sure "package" variable is not empty
     if [[ -n "$package" ]]; then 
+# this will print a message to the user that the pacckage is being installed
       echo "installing $package..."
+# first part of the function is used to install the package using pacman without confirmation
+# second part of the function prints an error message to the user that the package failed to install
+# || will only run the error message on the right only if the one on the left fails. This means that is pacman fails to install one of the packages, it will print the error message
       pacman -S --noconfirm "$package" || echo "Failed to install $package"
+# end of the if statement
     fi
+# the contents of list-packages.txt will be inserted into the while loop
   done < list-packages.txt
+# closes the install-package function 
 }
 
-
+# Call the three functions below
 check-root
 check-package-exists
 install-package

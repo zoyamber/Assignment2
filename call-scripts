@@ -3,19 +3,29 @@
 
 # https://www.baeldung.com/linux/shell-call-script-from-another
 
+# this prints a message to the user that list-packages is being called
 echo "calling list packages:"
+# this line executes list-packages located in current directory
 ./list-packages
 
+# prints empty line for spacing
 echo \
 
+# this prints a message to the user that install-packages is being called
 echo "calling installing packages:"
+# this line executes install-packages located in current directory
 ./install-packages
 
+# prints empty line for spacing
 echo \
 
+# this prints a message to the user that config-app-files is being called
 echo "calling config for symolic links:"
+# this line executes config-app-files located in current directory
 ./config-app-files
 
+# prints empty line for spacing
 echo \
 
+# prints a message to the user letting them know that all the scripts were called successfully
 echo "All the scripts were called and loaded successfully!"
