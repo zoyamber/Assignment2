@@ -11,7 +11,7 @@
     - Create-user
 - Conclusion
 
-# INTRODUCTION
+### INTRODUCTION
 
 In this assignment, I was tasked to write two essential shell scripts to automate common system administration tasks:
 
