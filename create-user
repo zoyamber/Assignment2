@@ -1,2 +1,95 @@
 #!/bin/bash
-# shenamg
+# shebang
+
+# this script is used to create a new user
+
+# https://learning.oreilly.com/library/view/linux-for-system/9781803247946/B18575_07.xhtml#_idParaDest-103
+
+
+# This is the start of an if statement that checks whether the EUID is not equal 0. (if it is run by root)
+if [[ $EUID -ne 0 ]]; then
+# If the user is not root, then it will print an error message to the user
+  echo "This script must be run as root"
+# It will exit with a code of 1 if there was an error
+  exit 1
+# this is the end of the if statement
+fi
+
+# This function is used to display some usage information to the user
+usage() {
+# provides a message to the user. $0 will be the name of the script
+  echo "Usage: $0 -u username -s shell -h home_directory [-g other_groups]"
+  # info for the user to understand. will print each of the options and a brief explanation.
+  echo " -u: "
+  echo " -s: "
+  echo " -h: "
+  echo " -g: "
+  exit 1
+}
+
+# Parse command-line options
+while getopts ":u:s:h:g:" opt; do
+  case ${opt} in
+    u)
+      username=${OPTARG}
+      ;;
+    s)
+      shell=${OPTARG}
+      ;;
+    h)
+      home_directory=${OPTARG}
+      ;;
+    g)
+      groups=${OPTARG}
+      ;;
+    \?)
+      echo "Option is invalid: -$OPTARG"
+      usage
+      ;;
+     esac
+done
+
+# Ensure required options are provided
+if [ -z "$username" ] || [ -z "$home_directory" ]; then
+  echo "There was an Error, username is required"
+  usage
+fi
+
+if [ -z "$home_directory" ]; then
+  
+
+
+
+
+# set default shell
+if [[ -z "$shell" ]]; then
+  shell="/bin/bash"
+  echo "You did not specify the shell. Default shell being used: $shell"
+fi
+
+
+# Create the user with the specified shell and home directory
+useradd -m -d "$home_directory" -s "$shell" "$username"
+
+# Check if user was created successfully
+if [ $? -ne 0 ]; then
+  echo "Failed to create user $username"
+  exit 1
+fi
+
+# Copy the contents of /etc/skel to the new user's home directory
+cp -r /etc/skel/ "$home_directory"
+
+# Add user to additional groups if specified
+if [ ! -z "$groups" ]; then
+  usermod -aG "$groups" "$username"
+fi
+
+# Set ownership of the home directory
+chown -R "$username":"$username" "$home_directory"
+
+# Set the password for the new user
+echo "Set the password for the new user:"
+passwd "$username"
+
+echo "User $username created successfully with home directory $home_directory and shell $shell."
