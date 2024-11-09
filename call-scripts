@@ -3,29 +3,77 @@
 
 # https://www.baeldung.com/linux/shell-call-script-from-another
 
-# this prints a message to the user that list-packages is being called
-echo "calling list packages:"
-# this line executes list-packages located in current directory
-./list-packages
+# Check if the script is run as root
+if [[ $EUID -ne 0 ]]; then
+  echo "Error: Run the file as root."
+  exit 1
+# Return a non zero exit code if error
+fi
 
-# prints empty line for spacing
-echo \
+# Initiate variables to identify user option
+list-packages=false
+install-packages=false
+config-app-files=false
 
-# this prints a message to the user that install-packages is being called
-echo "calling installing packages:"
-# this line executes install-packages located in current directory
-./install-packages
+while getopts "gil" opt; do
+  case $opt in
+    g)
+    #When user pass in '-g' option, change list-packages to True
+      list-packages=true
+      ;;
+    i)
+    # When user pass in '-i' option, change install-packages to True
+      install-package=true
+      ;;
 
-# prints empty line for spacing
-echo \
+    l)
+    # When user pass in '-l' option, change config-app-files to True
+      config-app-files=true
+      ;;
+    *)
+    # When other arguments occur, display the user-guide function again showing the syntax
+      user-guide
+      ;;
+  esac
+done
 
-# this prints a message to the user that config-app-files is being called
-echo "calling config for symolic links:"
-# this line executes config-app-files located in current directory
-./config-app-files
 
-# prints empty line for spacing
-echo \
+# Run the script containing list of packages
+if $list-packages; then
+    echo "Generating package list...."
+    if ./list-packages; then
+        echo "Generated the list successfully"
+    else
+        echo "ERROR: could not generate list"
+    fi
+fi
 
-# prints a message to the user letting them know that all the scripts were called successfully
-echo "All the scripts were called and loaded successfully!"
+
+# Run the script with the install package details
+if $install-packages; then
+    echo "Running package installation..."
+    if ./install-packages; then
+        echo "Packages installed successfully"
+    else
+        echo "ERROR: could not install the packages"
+
+    fi
+fi
+
+
+# Run the symbolic links creation script
+if  $config-app-files; then
+    echo "Creating symbolic links..."
+    if ./config-app-files; then
+        echo "Symbolic link created successfully"
+    else
+        echo "ERROR: could not create symbolic link for config files"
+    fi
+fi
+
+# If neither option is given by user, show user_guide to display syntax
+if ! $list-packages && ! $install-packages && ! $config-app-files; then
+  user_guide
+else
+    echo "System setup complete"
+fi

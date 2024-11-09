@@ -2,6 +2,15 @@
 # specifies bash shell
 # The purpose of this script is to create a list of packages in list-packages.txt
 
+# This is the start of an if statement that checks whether the EUID is not equal 0. (if it is run by root)
+if [[ $EUID -ne 0 ]]; then
+# If the user is not root, then it will print an error message to the user
+  echo "This script must be run as root"
+# It will exit with a code of 1 if there was an error
+  exit 1
+# this is the end of the if statement
+fi
+
 # Function to list packages
 list-packages() {
 #this defines the 2 packages that are going to be written into a list
