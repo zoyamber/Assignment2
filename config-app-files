@@ -7,8 +7,33 @@
 
 # https://phoenixnap.com/kb/symbolic-link-linux 
 
+# # Check if the script is run as root
+if [[ $EUID -ne 0 ]]; then
+  echo "Error: Please run this script with root privilege."
+  exit 1
+fi
+
 # this will define the variable called "config_dir" to hold the current directory path 
 config_dir=$(pwd)
+# will take symbolic link as second argument
+dest_link=$1
+
+create_sym_link() {
+# checks if a path exist or not, if yes, return true
+  if [[ -e "$config_dir" ]]; then
+# creates a symbolic link dest_link to a source file
+  if ln -sf "$config_dir" "$dest_link"; then
+# prints a success message to the user
+      echo "Successfully created symlink: $dest_link -> $config_dir"
+    else
+# prints an error message to the user
+      echo "Error: Failed to create symlink for $config_dir"
+    fi
+  else
+    echo "Error: Source $config_dir does not exist."
+  fi
+# end of statement
+}
 
 #this will create a symbolic link from my config directory to "~/bin/sayhi"
 ln -sf "$config_dir/bin/sayhi" ~/bin/sayhi

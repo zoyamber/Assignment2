@@ -18,18 +18,25 @@ fi
 # This function is used to display some usage information to the user
 usage() {
 # provides a message to the user. $0 will be the name of the script
-  echo "Usage: $0 -u username -s shell -h home_directory [-g other_groups]"
-  # info for the user to understand. will print each of the options and a brief explanation.
-  echo " -u: "
-  echo " -s: "
-  echo " -h: "
-  echo " -g: "
+  echo "Usage: sudo $0 -u username -s shell -h user_home_directory [-g other_groups]"
+# info for the user to understand. will print each of the options and a brief explanation.
+  echo "Options: "
+  echo " -u:  specifies the username"
+  echo " -s:  Specifies the shell"
+  echo " -h:  Specifies the user's home directory"
+  echo " -g:  Optional: Add user to additional groups"
+# Returns an exit code indicatng an error
   exit 1
+# end of function
 }
 
-# Parse command-line options
+# Parse command-line options using getopts
+# ':' after the characters will specify that the option requires an argument
 while getopts ":u:s:h:g:" opt; do
   case ${opt} in
+# OPTARG holds passed in argument for that current option
+# Assign the arguments. ex) -u to USERNAME
+# same idea for the others...
     u)
       username=${OPTARG}
       ;;
@@ -37,59 +44,70 @@ while getopts ":u:s:h:g:" opt; do
       shell=${OPTARG}
       ;;
     h)
-      home_directory=${OPTARG}
+      home_dir=${OPTARG}
       ;;
     g)
       groups=${OPTARG}
       ;;
-    \?)
-      echo "Option is invalid: -$OPTARG"
+# if a user passes in an argument that is incorrect and does not matchany of the options, wilcard will be triggered meaning that the system will show the user the correct syntax
+    *)
       usage
       ;;
      esac
+#end of getopts
 done
 
-# Ensure required options are provided
-if [ -z "$username" ] || [ -z "$home_directory" ]; then
+# Ensures that the user has provided a username
+if [ -z "${username}" ]; then
+# will display an error message to the user
   echo "There was an Error, username is required"
+# will call the usage instructions
   usage
+# end of if statement
 fi
-
-if [ -z "$home_directory" ]; then
   
+# If the user doesn't specify a home directory,it will set default to /home/username
+if [ -z "${home_dir}" ]; then
+# default home directory path
+  home_dir=/home/${username}  
+# end of if statement
+fi
 
-
-
-
-# set default shell
-if [[ -z "$shell" ]]; then
+# this will set a default shell
+if [[ -z "${shell}" ]]; then
   shell="/bin/bash"
-  echo "You did not specify the shell. Default shell being used: $shell"
+  echo "You did not specify the shell. Default shell will be used: ${shell}"
+# end of if statmement
 fi
 
+# This will create a user with the specified shell and home directory
+useradd -m -d "${home_dir}" -s "${shell}" "${username}"
 
-# Create the user with the specified shell and home directory
-useradd -m -d "$home_directory" -s "$shell" "$username"
-
-# Check if user was created successfully
+# This if statement will check to see if the user was successfully created
 if [ $? -ne 0 ]; then
-  echo "Failed to create user $username"
+# Print an error letting the user know the user was not created
+  echo "Failed to create the user ${username}"
+# indicates an error
   exit 1
+# if statement finished
 fi
 
-# Copy the contents of /etc/skel to the new user's home directory
-cp -r /etc/skel/ "$home_directory"
+# Copy the contents of /etc/skel to "${home_directory}
+cp -r /etc/skel/ "${home_directory}"
 
-# Add user to additional groups if specified
-if [ ! -z "$groups" ]; then
-  usermod -aG "$groups" "$username"
+# if specified, it will add user to additional groups
+if [ ! -z "${groups}" ]; then
+# this line will append user to the specified group without removing them from others
+  usermod -aG "${groups}" "${username}"
 fi
 
-# Set ownership of the home directory
-chown -R "$username":"$username" "$home_directory"
+# this will change the ownership from home_directory to username
+chown -R "${username}":"${username}" "${home_directory}"
 
-# Set the password for the new user
-echo "Set the password for the new user:"
+# prints a message instructing to set up a password for user
+echo "Set a password: "
+# runs passwd command for new user
 passwd "$username"
 
-echo "User $username created successfully with home directory $home_directory and shell $shell."
+# success message for the user
+echo "User ${username} was created successfully. Home directory ${home_directory}. Shell ${shell}."
