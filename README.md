@@ -167,7 +167,7 @@ This Bash script is designed to check if it’s being run as root, ensure a pack
 - Calls the install-package function to install each package listed in list-packages.txt
 
 
-## Script 3: app-config-files
+## Script 3: config-app-files
 
 
 This script sets up symbolic links for configuration files, allowing users to easily configure their environment by linking files from a central directory to standard locations in the home directory. This simplifies setup and management of dotfiles across systems
