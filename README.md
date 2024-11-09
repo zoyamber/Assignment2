@@ -9,7 +9,6 @@
     - call-scripts
 - Project 2
     - Create-user
-- Conclusion
 
 # INTRODUCTION
 
@@ -227,7 +226,84 @@ This script sets up symbolic links for configuration files, allowing users to ea
 - Prints a success message after all symbolic links have been created.
 
 
-## script4: call-scripts
+## script 4: call-scripts**
+
+This script uses command-line options to run different setup tasks by calling other scripts. Based on user-provided options, it can generate a package list, install packages, or create symbolic links for configuration files. Each option runs a specific task, and the script checks for errors, guiding the user if no valid option is provided.
+
+
+**1. list-packages=false, install-packages=false, config-app-files=false**
+- Initializes three variables to false to track which options the user selects.
+
+
+**2.  getopts "gil" opt; do ... done**
+- Starts a while loop to handle command-line options (-g, -i, and -l) using getopts.
+
+
+**3. case $opt in ... esac**
+- A case statement sets specific variables to true based on the option provided:
+- g: Sets list-packages to true when -g is passed.
+- i: Sets install-packages to true when -i is passed.
+- l: Sets config-app-files to true when -l is passed.
+- *: wildcard is triggered, correct syntax will be provided
+
+
+**4. if $list-packages; then ... fi**
+- If list-packages is true, it executes the ./list-packages script, showing success or error messages.
+
+
+**5. if $install-packages; then ... fi**
+- If install-packages is true, it runs ./install-packages, showing relevant success or error messages.
+
+
+**6. if $config-app-files; then ... fi**
+- If config-app-files is true, it calls ./config-app-files to create symbolic links.
+
+
+**7. if ! $list-packages && ! $install-packages && ! $config-app-files; then**
+- If no options are selected, the script calls user_guide to display instructions.
+
+
+# Project 2: creating a new user
+
+**Purpose of the Script:**
+
+
+This script automates the process of creating a new user on a Linux system. It allows customization of user settings such as the shell, home directory, and additional group memberships. It requires root privileges to execute, ensuring only authorized users can add new users.
+
+**Command-Line Options:**
+
+-u for specifying the username.
+-s for defining the default shell.
+-h for setting the home directory.
+-g for adding the user to additional groups (optional).
+
+
+**Error Handling:**
+
+Checks if the user is root. If not, it exits with an error.
+Checks if a username is provided. If not, it displays usage instructions and exits.
+
+**Commands:**
+
+- **Check for Root Privileges:** Uses the EUID variable to confirm the script is run as root.
+
+- **Parse Command-Line Arguments:** The getopts command captures options and assigns them to variables (username, shell, home_dir, and groups).
+
+- **Assign Default Values:** If the home directory or shell isn’t specified, defaults are set for each.
+
+- **Create the User:** The useradd command is executed with the specified (or default) shell and home directory.
+
+- **Copy Skeleton Files:** Copies default configuration files from /etc/skel to the user's home directory.
+
+- **Assign Group Membership:** If specified, adds the user to additional groups without affecting current memberships.
+
+- **Change Ownership:** Updates the home directory’s ownership to the new user.
+
+- **Set Password:** Prompts for a password for the newly created user.
+
+- **Completion Message:** Confirms successful user creation, displaying the username, home directory, and shell.
+
+
 
 
 
